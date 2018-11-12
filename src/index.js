@@ -15,7 +15,8 @@ const ips = Object.entries(process.env).reduce((list, [key, ip]) => (
 
 const ipMiddleware = (req, res, next) => {
   const clientIp = requestIp.getClientIp(req)
-  console.log('nani?', req.headers['x-forwarded-for'], req.connection.remoteAddress)
+  console.log('nani?', req.headers['x-forwarded-for'], req.connection.remoteAddress, req.connection.localAddress)
+  console.log(req.headers)
 
   if (!ips.includes(clientIp)) {
     console.log(`denied ip: ${clientIp}`)
