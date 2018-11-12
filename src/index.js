@@ -1,6 +1,5 @@
 const express = require('express')
 const proxy = require('http-proxy-middleware')
-const requestIp = require('request-ip')
 const cors = require('cors')
 
 const {
@@ -9,40 +8,23 @@ const {
   PORT
 } = process.env
 
-const ips = Object.entries(process.env).reduce((list, [key, ip]) => (
-  key.startsWith('IP') ? list.concat(ip) : list
+const domains = Object.entries(process.env).reduce((list, [key, domain]) => (
+  key.startsWith('DOMAIN') ? list.concat(domain) : list
 ), [])
 
-const ipMiddleware = (req, res, next) => {
-  const clientIp = requestIp.getClientIp(req)
-  console.log('nani?', req.headers['x-forwarded-for'], req.connection.remoteAddress, req.connection.localAddress)
-  console.log(req.headers)
-
-  if (!ips.includes(clientIp)) {
-    console.log(`denied ip: ${clientIp}`)
-    res.status(401)
-  } else {
-    console.log(`allowed ip: ${clientIp}`)
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (domains.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
   }
-
-  next()
 }
 
 const app = express()
 
-app.use(cors())
-
-app.use(ipMiddleware)
-
-app.use((error, req, res, next) => {
-  if (error instanceof IpDeniedError) {
-    res.status(401)
-  } else {
-    res.status(error.status || 500)
-  }
-
-  next(error)
-})
+app.use(cors(corsOptions))
 
 app.use('/proxy', proxy({
   target: AWS_URL,
