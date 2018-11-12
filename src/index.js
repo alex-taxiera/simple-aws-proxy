@@ -1,9 +1,6 @@
 const express = require('express')
 const proxy = require('http-proxy-middleware')
-const {
-  IpFilter,
-  IpDeniedError
-} = require('express-ipfilter')
+const requestIp = require('request-ip')
 const cors = require('cors')
 
 const {
@@ -16,11 +13,24 @@ const ips = Object.entries(process.env).reduce((list, [key, ip]) => (
   key.startsWith('IP') ? list.concat(ip) : list
 ), [])
 
+const ipMiddleware = (req, res, next) => {
+  const clientIp = requestIp.getClientIp(req)
+
+  if (!ips.includes(clientIp)) {
+    console.log(`denied ip: ${clientIp}`)
+    res.status(401)
+  } else {
+    console.log(`allowed ip: ${clientIp}`)
+  }
+
+  next()
+}
+
 const app = express()
 
 app.use(cors())
 
-app.use(IpFilter(ips, { mode: 'allow' }))
+app.use(ipMiddleware)
 
 app.use((error, req, res, next) => {
   if (error instanceof IpDeniedError) {
