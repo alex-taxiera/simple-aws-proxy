@@ -6,6 +6,7 @@ const {
 
 const customCors = cors({
   origin: (origin, callback) => {
+    console.log('testing', store.isValid && store.host === origin)
     if (store.isValid && store.host === origin) {
       callback(null, true)
     } else {
