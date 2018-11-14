@@ -1,4 +1,4 @@
-const customOrigin = require('./helpers/customOrigin')
+const customOrigin = require('./customOrigin')
 
 module.exports = {
   customOrigin
