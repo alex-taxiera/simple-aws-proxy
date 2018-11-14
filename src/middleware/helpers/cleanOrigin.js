@@ -1,4 +1,4 @@
-function customOrigin (origin) {
+function cleanOrigin (origin) {
   if (origin.startsWith('http')) {
     origin = origin.split('://')[1]
   }
@@ -11,4 +11,4 @@ function customOrigin (origin) {
   return origin
 }
 
-module.exports = customOrigin
+module.exports = cleanOrigin

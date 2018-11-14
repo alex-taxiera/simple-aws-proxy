@@ -1,5 +1,5 @@
-const customOrigin = require('./customOrigin')
+const cleanOrigin = require('./cleanOrigin')
 
 module.exports = {
-  customOrigin
+  cleanOrigin
 }
