@@ -4,7 +4,6 @@ const proxy = require('http-proxy-middleware')
 const {
   ipLog,
   originLog,
-  customOrigin,
   captcha,
   cors
 } = require('./middleware')
@@ -19,12 +18,11 @@ const app = express()
 
 app.use(ipLog)
 app.use(originLog)
-app.use(customOrigin)
 app.use(captcha.getCaptcha)
 app.use(cors)
 app.use(captcha.verifyCaptcha)
 
-app.options('*', cors)
+// app.options('*', cors)
 
 app.use('/proxy/user', proxy({
   target: AWS_URL,

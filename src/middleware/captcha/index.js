@@ -1,6 +1,10 @@
 const request = require('superagent')
 
 const {
+  cleanOrigin
+} = require('../helpers')
+
+const {
   AWS_URL,
   AWS_API_KEY
 } = process.env
@@ -45,7 +49,8 @@ class ReCaptcha {
 }
 
 function getCaptcha (req, res, next) {
-  store.request(req.headers.origin)
+  const origin = cleanOrigin(req.headers.origin)
+  store.request(origin)
     .then((res) => next())
     .catch((res) => next())
 }

@@ -1,5 +1,4 @@
-function customOrigin (req, res, next) {
-  let origin = req.headers.origin
+function customOrigin (origin) {
   if (origin.startsWith('http')) {
     origin = origin.split('://')[1]
   }
@@ -9,9 +8,7 @@ function customOrigin (req, res, next) {
   } else {
     origin = parts.join('.')
   }
-  req.headers['origin'] = origin
-  console.log(`[CuO] Modified origin: ${origin}`)
-  next()
+  return origin
 }
 
 module.exports = customOrigin
