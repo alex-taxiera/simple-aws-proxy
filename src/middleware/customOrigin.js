@@ -1,13 +1,13 @@
 function customOrigin (req, res, next) {
-  let host = req.headers.host
-  const parts = host.split('.')
+  let origin = req.headers.origin
+  const parts = origin.split('.')
   if (parts.length > 2) {
-    host = parts[parts.length - 2] + '.' + parts[parts.length - 1]
+    origin = parts[parts.length - 2] + '.' + parts[parts.length - 1]
   } else {
-    host = parts.join('.')
+    origin = parts.join('.')
   }
-  req.headers['origin'] = host
-  console.log(`[CuO] Modified origin: ${host}`)
+  req.headers['origin'] = origin
+  console.log(`[CuO] Modified origin: ${origin}`)
   next()
 }
 
