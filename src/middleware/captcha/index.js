@@ -39,7 +39,8 @@ class ReCaptcha {
       .query({ response: token })
       .query({ remoteip: ip })
       .then((res) => {
-        if (!res.success) {
+        console.log('body', res.body)
+        if (!res.body.success) {
           throw Error('Google says no')
         } else {
           return res
@@ -57,12 +58,10 @@ function getCaptcha (req, res, next) {
 
 function verifyCaptcha (req, res, next) {
   store.verify(req.headers['recaptcha-token'])
-    .then((res) => {
-      console.log(res)
-      next()
-    })
+    .then((res) => next())
     .catch((error) => {
       console.log(`[REC] ReCaptcha failed: ${error.message}`)
+      res.status(403).json({ error: 'ReCaptcha failed' })
     })
 }
 
