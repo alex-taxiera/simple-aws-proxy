@@ -24,6 +24,8 @@ app.use(captcha.getCaptcha)
 app.use(cors)
 app.use(captcha.verifyCaptcha)
 
+app.options('*', cors)
+
 app.use('/proxy/user', proxy({
   target: AWS_URL,
   changeOrigin: true,
