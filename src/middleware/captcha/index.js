@@ -47,7 +47,8 @@ class ReCaptcha {
 function getCaptcha (req, res, next) {
   store.request(req.headers.origin)
     .then((res) => next())
-    .catch((error) => {
+    .catch((res) => {
+      console.log(res.body)
       console.error('[REC] Encountered an error requesting key:', error)
     })
 }
