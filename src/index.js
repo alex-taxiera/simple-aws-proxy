@@ -1,6 +1,13 @@
 const express = require('express')
 const proxy = require('http-proxy-middleware')
-const cors = require('cors')
+
+const {
+  ipLog,
+  originLog,
+  customOrigin,
+  captcha,
+  cors
+} = require('./middleware')
 
 const {
   AWS_URL,
@@ -8,31 +15,20 @@ const {
   PORT
 } = process.env
 
-const domains = Object.entries(process.env).reduce((list, [key, domain]) => (
-  key.startsWith('DOMAIN') ? list.concat(domain) : list
-), [])
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (domains.indexOf(origin) !== -1) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
-}
-
 const app = express()
 
-app.use(cors(corsOptions))
+app.use(ipLog)
+app.use(originLog)
+app.use(customOrigin)
+app.use(captcha.getCaptcha)
+app.use(cors)
+app.use(captcha.verifyCaptcha)
 
-app.use('/proxy', proxy({
+app.use('/proxy/user', proxy({
   target: AWS_URL,
   changeOrigin: true,
   pathRewrite: { '^/proxy': '' },
-  onProxyReq: (proxyReq, req, socket, options, head) => {
-    proxyReq.setHeader('x-api-key', AWS_API_KEY)
-  }
+  headers: { 'x-api-key': AWS_API_KEY }
 }))
 
-app.listen(PORT, () => console.log(`listening on port: ${PORT}`))
+app.listen(PORT, () => console.log(`[LOG] Listening on port: ${PORT}`))
