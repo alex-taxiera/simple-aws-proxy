@@ -39,7 +39,6 @@ class ReCaptcha {
       .query({ response: token })
       .query({ remoteip: ip })
       .then((res) => {
-        console.log('body', res.body)
         if (!res.body.success) {
           throw Error('Google says no')
         } else {
