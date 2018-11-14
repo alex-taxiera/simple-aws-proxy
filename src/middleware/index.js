@@ -1,4 +1,3 @@
-// TODO import/exports
 const ipLog = require('./ipLog')
 const originLog = require('./originLog')
 const customOrigin = require('./customOrigin')
