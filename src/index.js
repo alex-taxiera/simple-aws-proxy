@@ -1,4 +1,5 @@
 const express = require('express')
+const helmet = require('helmet')
 const proxy = require('http-proxy-middleware')
 
 const {
@@ -15,6 +16,8 @@ const {
 } = process.env
 
 const app = express()
+
+app.use(helmet())
 
 app.use(ipLog)
 app.use(originLog)
