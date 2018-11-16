@@ -10,21 +10,27 @@ const {
 } = process.env
 
 class ReCaptcha {
-  set ({ host, sitekey, secret } = {}) {
+  set ({ host, secret } = {}) {
     this.host = host
-    this.sitekey = sitekey
     this.secret = secret
-    if (host && sitekey && secret) {
+    if (host && secret) {
       this.isValid = true
     }
   }
 
   request (origin) {
     return request
-      .get(AWS_URL + `/admin/recaptcha-keys/${origin}`)
+      .get(AWS_URL + `/domain-info/${origin}`)
       .set('x-api-key', AWS_API_KEY)
       .then((res) => {
-        this.set(res.body)
+        const {
+          host,
+          recaptchaSecret
+        } = res.body
+        this.set({
+          host,
+          secret: recaptchaSecret
+        })
         return true
       })
   }
