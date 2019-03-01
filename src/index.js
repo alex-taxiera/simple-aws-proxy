@@ -1,13 +1,11 @@
 const express = require('express')
 const helmet = require('helmet')
 const proxy = require('http-proxy-middleware')
+const cors = require('cors')
 
-const {
-  ipLog,
-  originLog,
-  captcha,
-  cors
-} = require('./middleware')
+const ipLog = require('./middleware/ip-log')
+const originLog = require('./middleware/origin-log')
+const verifyCaptcha = require('./middleware/verify-captcha')
 
 const {
   AWS_URL,
@@ -28,10 +26,9 @@ app.use(helmet())
 
 app.use(ipLog)
 app.use(originLog)
-app.use(captcha.getCaptcha)
-app.use(cors)
+app.use(cors())
 
-app.use('/proxy/recaptcha', captcha.verifyCaptcha, proxyWare)
-app.use('/proxy/nocaptcha', proxyWare)
+app.use('/proxy/recaptcha', verifyCaptcha, proxyWare)
+app.use('/proxy', proxyWare)
 
 app.listen(PORT, () => console.log(`[LOG] Listening on port: ${PORT}`))
