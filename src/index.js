@@ -18,7 +18,6 @@ const app = express()
 const proxyWare = proxy({
   target: AWS_URL,
   changeOrigin: true,
-  pathRewrite: { '^/proxy': '' },
   headers: { 'x-api-key': AWS_API_KEY }
 })
 
@@ -28,7 +27,7 @@ app.use(ipLog)
 app.use(originLog)
 app.use(cors())
 
-app.use('/proxy/recaptcha', verifyCaptcha, proxyWare)
-app.use('/proxy', proxyWare)
+app.use('/recaptcha', verifyCaptcha, proxyWare)
+app.use('/', proxyWare)
 
 app.listen(PORT, () => console.log(`[LOG] Listening on port: ${PORT}`))
